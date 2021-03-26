@@ -19,5 +19,5 @@ def nearest_neighbour_sum(state, dimensions):
     for dimension in np.arange(dimensions):
         neighbours[2*dimension   ,:,:] = np.roll(state, 1, axis=dimension)
         neighbours[2*dimension +1,:,:] = np.roll(state, -1, axis=dimension)
-        
+
     return np.sum(state*neighbours)

@@ -16,7 +16,7 @@ class MetropolisAlgorithm:
     def make_new_state(self):
         coordinate = np.random.randint(0,self.size,self.dimensions)
         self.new_state = np.copy(self.state)
-        self.new_state[coordinate] = not self.new_state[tuple(coordinate)]
+        self.new_state[tuple(coordinate)] = not self.new_state[tuple(coordinate)]
     
     def step(self):
         self.make_new_state()
