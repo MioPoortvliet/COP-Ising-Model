@@ -3,8 +3,8 @@ import numpy as np
 
 class MetropolisAlgorithm:
 
-    def __init__(self, distributions, settings):
-        self.distributions = distributions
+    def __init__(self, distribution, settings):
+        self.distribution = distribution
         self.settings = settings
         self.size = settings["size"]
         self.dimensions = settings["dimensions"]
