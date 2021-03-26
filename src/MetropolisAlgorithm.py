@@ -19,10 +19,10 @@ class MetropolisAlgorithm:
         self.new_state[coordinate] = not self.new_state[coordinate]
     
     def step(self):
-        make_new_state()
-        probability_current_state = pobability_distribution(self.state)
-        probability_new_state = pobability_distribution(self.new_state)
-        if probability_new_state >  probability_current_state:
+        self.make_new_state()
+        probability_current_state = self.distribution(self.state)
+        probability_new_state = self.distribution(self.new_state)
+        if probability_new_state > probability_current_state:
             acceptance_probability = 1
         else:
             acceptance_probability = probability_new_state /  probability_current_state
