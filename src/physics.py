@@ -15,9 +15,13 @@ class IsingModel:
 
 def nearest_neighbour_sum(state, dimensions):
     neighbours = np.zeros(shape=(2*dimensions, *state.shape), dtype=np.bool_)
-    
+
+    n, m = state.shape
+    roll_backwards_idx = np.arange(-1, n-1)
+    roll_forward_idx = np.arange(1-n, 1)
+
     for dimension in range(dimensions):
-        neighbours[2*dimension  ,:,:] = np.roll(state, 1, axis=dimension)
-        neighbours[2*dimension+1,:,:] = np.roll(state, -1, axis=dimension)
+        neighbours[2*dimension  ,:,:] = np.swapaxes(np.swapaxes(state, dimension, 0)[roll_forward_idx], 0, dimension)
+        neighbours[2*dimension+1,:,:] = np.swapaxes(np.swapaxes(state, dimension, 0)[roll_backwards_idx], 0, dimension)
 
     return np.sum(state*neighbours)
