@@ -3,12 +3,17 @@ import numpy as np
 
 class MetropolisAlgorithm:
 
-	def __init__(self, distributions, settings):
-		self.distributions = distributions
-		self.settings = settings
-		self.size = settings["size"]
-		self.dimensions = settings["dimensions"]
-		self.initial_distribution = settings["initial_distribution"]
+    def __init__(self, distributions, settings):
+        self.distributions = distributions
+        self.settings = settings
+        self.size = settings["size"]
+        self.dimensions = settings["dimensions"]
+        self.initial_distribution = settings["initial_distribution"]
 
-		self.grid = np.random.choice(a=[True, False], size=self.size**self.dimensions, p=self.initial_distribution)
-		self.grid = np.reshape(self.grid, newshape=np.repeat(self.size, self.dimensions))
+        self.state = np.random.choice(a=[True, False], size=self.size**self.dimensions, p=[self.initial_distribution,1-self.initial_distribution])
+        self.state = np.reshape(self.state, newshape=np.repeat(self.size, self.dimensions))
+        
+    def new_state(self):
+        coordinate = np.random.randint(0,self.size,self.dimensions)
+        self.newstate = np.copy(self.state)
+        self.newstate[coordinate] = not self.newstate[coordinate]
