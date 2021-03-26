@@ -26,4 +26,5 @@ class MetropolisAlgorithm:
             acceptance_probability = 1
         else:
             acceptance_probability = probability_new_state /  probability_current_state
-        self.state = np.random.choice(a=[self.state, self.new_state] , p=[1-acceptance_probability,acceptance_probability])
+        if np.random.choice(a=[True, False] , p=[acceptance_probability,1-acceptance_probability]):
+            self.state = np.copy( self.new_state)
