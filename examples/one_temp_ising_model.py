@@ -3,10 +3,10 @@ from src.physics import IsingModel
 from src.visualization import plot_grid
 
 if __name__ == "__main__":
-	settings = {"size":50, "dimensions":2, "initial_distribution":[0.5, 0.5]}
+	settings = {"size":50, "dimensions":2, "initial_distribution":0.5}
 
 	im = IsingModel(temperature=300)
-	distributions = {"probability":im.distributions}
+	distribution = im.probability_distribution
 
-	mc = MetropolisAlgorithm(distributions, settings)
-	plot_grid(mc.grid)
+	mc = MetropolisAlgorithm(distribution, settings)
+	plot_grid(mc.state)
