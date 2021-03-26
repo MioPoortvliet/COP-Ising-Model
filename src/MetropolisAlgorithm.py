@@ -22,9 +22,11 @@ class MetropolisAlgorithm:
         self.make_new_state()
         probability_current_state = self.probability_distribution(self.state)
         probability_new_state = self.probability_distribution(self.new_state)
+
         if probability_new_state > probability_current_state:
             acceptance_probability = 1
         else:
-            acceptance_probability = probability_new_state / probability_current_state
-        if np.random.choice(a=[False, True], p=[1-acceptance_probability, acceptance_probability]):
-            self.state = np.copy(self.new_state)
+            acceptance_probability = probability_new_state /  probability_current_state
+
+        if np.random.choice(a=[True, False] , p=[acceptance_probability,1-acceptance_probability]):
+            self.state = np.copy( self.new_state)
