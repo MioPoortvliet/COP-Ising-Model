@@ -1,9 +1,9 @@
 import numpy as np
 
 
-class MonteCarlo:
-	def __init__(self, distributions, settings):
-		self.distributions = distributions
+class MetropolisAlgorithm:
+	def __init__(self, probability_distribution, settings):
+		self.probability_distribution = probability_distribution
 		self.settings = settings
 		self.size = settings["size"]
 		self.dimensions = settings["dimensions"]
