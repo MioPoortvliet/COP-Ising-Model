@@ -18,6 +18,12 @@ class MetropolisAlgorithm:
         self.new_state = np.copy(self.state)
         self.new_state[coordinate] = not self.new_state[coordinate]
     
-    def simulation(self):
+    def step(self):
         make_new_state()
-        if pobability_distribution(self.new_state) > pobability_distribution(self.state):
+        probability_current_state = pobability_distribution(self.state)
+        probability_new_state = pobability_distribution(self.new_state)
+        if probability_new_state >  probability_current_state:
+            acceptance_probability = 1
+        else:
+            acceptance_probability = probability_new_state /  probability_current_state
+        self.state = np.random.choice(a=[self.state, self.new_state] , p=[1-acceptance_probability,acceptance_probability])
