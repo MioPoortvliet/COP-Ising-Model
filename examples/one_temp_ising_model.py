@@ -9,4 +9,5 @@ if __name__ == "__main__":
 	distribution = im.probability_distribution
 
 	mc = MetropolisAlgorithm(distribution, settings)
+	mc.step()
 	plot_grid(mc.state)
