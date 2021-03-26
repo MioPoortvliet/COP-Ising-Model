@@ -17,7 +17,7 @@ def nearest_neighbour_sum(state, dimensions):
     neighbours = np.zeros(shape=(2*dimensions, *state.shape), dtype=bool)
     
     for dimension in np.arange(dimensions):
-        neighbours[2*dimension   ,:,:]    = np.roll(state, 1, axis=dimension)
+        neighbours[2*dimension   ,:,:] = np.roll(state, 1, axis=dimension)
         neighbours[2*dimension +1,:,:] = np.roll(state, -1, axis=dimension)
-    return np.sum( state*neighbours , axis=0)
+    return np.sum(state*neighbours)
     

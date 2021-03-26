@@ -16,7 +16,7 @@ class MetropolisAlgorithm:
     def make_new_state(self):
         coordinate = np.random.randint(0,self.size,self.dimensions)
         self.new_state = np.copy(self.state)
-        self.new_state[coordinate] = ~ self.new_state[coordinate]
+        self.new_state[coordinate] = not self.new_state[tuple(coordinate)]
     
     def step(self):
         self.make_new_state()
@@ -25,5 +25,6 @@ class MetropolisAlgorithm:
         if probability_new_state > probability_current_state:
             acceptance_probability = 1
         else:
-            acceptance_probability = probability_new_state /  probability_current_state
-        self.state = np.random.choice(a=[self.state, self.new_state] , p=[1-acceptance_probability,acceptance_probability])
+            acceptance_probability = probability_new_state / probability_current_state
+        if np.random.choice(a=[False, True], p=[1-acceptance_probability, acceptance_probability]):
+            self.state = np.copy(self.new_state)
