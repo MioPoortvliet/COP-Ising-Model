@@ -3,8 +3,8 @@ import numpy as np
 
 class MetropolisAlgorithm:
 
-    def __init__(self, distribution, settings):
-        self.distribution = distribution
+    def __init__(self, pobability_distribution, settings):
+        self.pobability_distribution = pobability_distribution
         self.settings = settings
         self.size = settings["size"]
         self.dimensions = settings["dimensions"]
@@ -19,9 +19,9 @@ class MetropolisAlgorithm:
         self.new_state[coordinate] = not self.new_state[coordinate]
     
     def step(self):
-        make_new_state()
-        probability_current_state = pobability_distribution(self.state)
-        probability_new_state = pobability_distribution(self.new_state)
+        self.make_new_state()
+        probability_current_state = self.pobability_distribution(self.state)
+        probability_new_state = self.pobability_distribution(self.new_state)
         if probability_new_state >  probability_current_state:
             acceptance_probability = 1
         else:
