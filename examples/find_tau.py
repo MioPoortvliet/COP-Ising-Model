@@ -13,8 +13,9 @@ def run_multiple(N=5, equilibrize_sweeps=500):
 
 	mc = MetropolisAlgorithm(model= im, property_functions=properties, settings=settings)
 
-	mc.run_steps(settings["size"] ** settings["dimensions"] * equilibrize_sweeps)
+	mag = mc.run_steps(settings["size"] ** settings["dimensions"] * equilibrize_sweeps)[::,1]
 	print("Presumably in equilibrium")
+	plot_time_trace(mag/mc.total_spins, ylabel="Magnetization $m$", ylims=(-1, 1))
 
 
 	tau = np.zeros(N)
@@ -53,4 +54,4 @@ def find_tau(mc, settings, sweeps=20):
 
 if __name__ == "__main__":
 	#find_tau(10)
-	run_multiple(5)
+	run_multiple(100)
