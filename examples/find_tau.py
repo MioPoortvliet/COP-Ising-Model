@@ -5,49 +5,52 @@ from src.postprocessing import calc_chi
 import numpy as np
 
 
-def run_multiple(N=5):
+def run_multiple(N=5, equilibrize_sweeps=500):
+	settings = {"size":50, "dimensions":2, "initial_distribution":0.5}
+
+	im = IsingModel(temperature=1, dims=settings["dimensions"])
+	properties = (magnetization,)
+
+	mc = MetropolisAlgorithm(model= im, property_functions=properties, settings=settings)
+
+	mc.run_steps(settings["size"] ** settings["dimensions"] * equilibrize_sweeps)
+	print("Presumably in equilibrium")
+
+
 	tau = np.zeros(N)
 	for n in range(N):
-		tau[n] = find_tau(sweeps=100)
+		tau[n] = find_tau(mc, settings, sweeps=20)
 
 	print(tau)
 	print(np.mean(tau), np.std(tau, ddof=1))
 	plot_time_trace(tau, "$\\tau$")
 
 
-def find_tau(sweeps=100):
-	settings = {"size":50, "dimensions":2, "initial_distribution":0.5}
+def find_tau(mc, settings, sweeps=20):
+	saved_properties = mc.run_steps(settings["size"]**settings["dimensions"]*sweeps)
+	print("Done with monte carlo, postprocessing")
 
-	im = IsingModel(temperature=0.01, dims=settings["dimensions"])
-	properties = (magnetization,)
+	mag = saved_properties[::,1]
+	chi = calc_chi(mag/settings["size"]**settings["dimensions"])
+	first_negative_index = np.argwhere(chi < 0)
+	if first_negative_index.size > 0:
+		tau = np.sum(chi[:first_negative_index[0,0]])
+	else:
+		tau = 0
+		print("Failed to determine tau!")
 
-	mc = MetropolisAlgorithm(model= im, property_functions=properties, settings=settings)
-
-	tau_flag = True
-	mag = np.array([])
-
-	while tau_flag:
-		saved_properties = mc.run_steps(settings["size"]**settings["dimensions"]*sweeps)
-		print("Done with monte carlo, postprocessing")
-		mag = np.concatenate((mag, saved_properties[::,1]))
-		chi = calc_chi(mag/settings["size"]**settings["dimensions"])
-		first_negative_index = np.argwhere(chi < 0)
-		if first_negative_index.size > 0:
-			tau_flag = False
-			tau = np.sum(chi[:first_negative_index[0,0]])
-
-
-		plot_time_trace(chi/chi[0], ylabel="$Chi(t)$")
+	plot_time_trace(chi, ylabel="$Chi(t)$")
 
 	print(tau)
+	#plot_grid(mc.state[::,::])
+	#plot_time_trace(mag/mc.total_spins, ylabel="Magnetization $m$", ylims=(-1, 1))
 	return tau
 	#plot_time_trace(np.cumsum(chi)/chi[0], ylabel="$tau$")
-	#plot_grid(mc.state[::,::])
 	#plot_time_trace(energy/mc.total_spins, ylabel="Energy $e$")
-	#plot_time_trace(mag/mc.total_spins, ylabel="Magnetization $m$", ylims=(-1, 1))
 
 
 
 
 if __name__ == "__main__":
-	run_multiple()
+	#find_tau(10)
+	run_multiple(5)
