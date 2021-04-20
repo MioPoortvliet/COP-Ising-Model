@@ -35,7 +35,7 @@ def find_tau(mc, settings, sweeps=20):
 	chi = calc_chi(mag/settings["size"]**settings["dimensions"])
 	first_negative_index = np.argwhere(chi < 0)
 	if first_negative_index.size > 0:
-		tau = np.sum(chi[:first_negative_index[0,0]])
+		tau = np.sum(chi[:first_negative_index[0,0]])/chi[0]
 	else:
 		tau = 0
 		print("Failed to determine tau!")
