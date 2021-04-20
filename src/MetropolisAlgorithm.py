@@ -17,6 +17,8 @@ class MetropolisAlgorithm:
 
         self.state = np.reshape(self.state, newshape=np.repeat(self.size, self.dimensions))
 
+        self.total_spins = self.state.size
+
         self.current_energy = self.model.hamiltonian(self.state)
 
 
@@ -44,13 +46,16 @@ class MetropolisAlgorithm:
 
 
     def run_steps(self, steps):
-        self.saved_properties = np.zeros(shape=(steps+1, len(self.propty_functions)))
+        self.saved_properties = np.zeros(shape=(steps+1, len(self.propty_functions)+1))
         self.calc_properties(0)
 
         for i in range(steps):
             self.step()
             self.calc_properties(i+1)
 
+        return self.saved_properties
+
     def calc_properties(self, i=0):
+        self.saved_properties[i, 0] = self.current_energy / self.total_spins
         for j, func in enumerate(self.propty_functions):
-            self.saved_properties[i,j] = func(self.state)
+            self.saved_properties[i,j+1] = func(self.state)

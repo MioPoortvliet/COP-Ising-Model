@@ -85,9 +85,9 @@ def generate_energy_difference_lookup(func, dims):
 def nearest_neighbour_sum(state, dimensions):
     neighbours = np.zeros(shape=(2*dimensions, *state.shape), dtype=np.bool_)
 
-    n, m = state.shape
-    roll_backwards_idx = np.arange(-1, n-1)
-    roll_forward_idx = np.arange(1-n, 1)
+    # Grid needs to be square due to this!
+    roll_backwards_idx = np.arange(-1, state.shape[0]-1)
+    roll_forward_idx = np.arange(1-state.shape[0], 1)
 
     # Loop through dims and find neighbour states to every spin
     for dimension in range(dimensions):
@@ -99,4 +99,4 @@ def nearest_neighbour_sum(state, dimensions):
 
 @njit
 def magnetization(state):
-    return np.sum(bool_to_spin(state)) / state.size
+    return np.sum(bool_to_spin(state))
