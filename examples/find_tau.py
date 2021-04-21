@@ -5,10 +5,18 @@ from src.postprocessing import calc_chi
 import numpy as np
 
 
-def run_multiple(N=5, equilibrize_sweeps=500):
-	settings = {"size":50, "dimensions":2, "initial_distribution":0.5}
+def tau_in_temp_range(temps, settings):
 
-	im = IsingModel(temperature=1, dims=settings["dimensions"])
+
+def run_multiple(
+		N=5,
+		equilibrize_sweeps=200,
+		sweeps=40,
+		settings={"size":50, "dimensions":2, "initial_distribution":0.5},
+		temperature=1
+):
+
+	im = IsingModel(dimensionless_temperature=temperature, dims=settings["dimensions"])
 	properties = (magnetization,)
 
 	mc = MetropolisAlgorithm(model= im, property_functions=properties, settings=settings)
@@ -20,7 +28,7 @@ def run_multiple(N=5, equilibrize_sweeps=500):
 
 	tau = np.zeros(N)
 	for n in range(N):
-		tau[n] = find_tau(mc, settings, sweeps=20)
+		tau[n] = find_tau(mc, settings, sweeps=sweeps)
 
 	print(tau)
 	print(np.mean(tau), np.std(tau, ddof=1))
@@ -40,7 +48,7 @@ def find_tau(mc, settings, sweeps=20):
 		tau = 0
 		print("Failed to determine tau!")
 
-	plot_time_trace(chi, ylabel="$Chi(t)$")
+	plot_time_trace(chi/chi[0], ylabel="$Chi(t)$")
 
 	print(tau)
 	#plot_grid(mc.state[::,::])
@@ -54,4 +62,8 @@ def find_tau(mc, settings, sweeps=20):
 
 if __name__ == "__main__":
 	#find_tau(10)
-	run_multiple(100)
+	#run_multiple(50)
+
+	settings = {"size": 50, "dimensions": 2, "initial_distribution": 0.5}
+	temps = np.arange(1, 5, 0.2)
+	tau_in_temp_range(temps)
