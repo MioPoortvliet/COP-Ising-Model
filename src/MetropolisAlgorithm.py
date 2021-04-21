@@ -1,3 +1,7 @@
+"""
+Monte Carlo engine.
+Authors: Mio Poortvliet, Jonah Post
+"""
 import numpy as np
 from src.utils import choice, Nchoice
 

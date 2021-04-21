@@ -1,3 +1,7 @@
+"""
+Helper functions to visualise the data generated.
+Authors: Mio Poortvliet, Jonah Post
+"""
 import matplotlib.pyplot as plt
 from datetime import datetime
 from src.IO_utils import ensure_dir, slugify

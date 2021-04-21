@@ -1,3 +1,7 @@
+"""
+Contains all physics of the Ising model system.
+Authors: Mio Poortvliet, Jonah Post
+"""
 import numpy as np
 from numba import njit
 from itertools import product

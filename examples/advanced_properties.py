@@ -38,7 +38,7 @@ quick_settings = {
 	"plot": 0
 }
 
-def main(settings:dict, fpath:str) -> None:
+def main(settings:dict, root_path:str) -> None:
 	"""
 	Plot correlation time, absolute magnetization, magnetic susceptibility and heat capacity given settings.
 	:param settings: contains at least: size, dimensions, initial_distribution, tmin, tmax, t_step_size,
@@ -47,6 +47,7 @@ def main(settings:dict, fpath:str) -> None:
 	:param fpath: path to write data and plots to
 	:type fpath: str
 	"""
+	fpath = f"{root_path}/{slugify(datetime.now().isoformat())}/"
 	ensure_dir(fpath)
 	# Save settings
 	to_json(fpath + "settings.json", settings)
@@ -68,5 +69,5 @@ def main(settings:dict, fpath:str) -> None:
 if __name__ == "__main__":
 	# Quick? Uncomment for quick (testing purposes only!):
 	settings = quick_settings
-	fpath = f"generated/data/{slugify(datetime.now().isoformat())}/"
+	fpath = f"generated/data"
 	main(settings, fpath)

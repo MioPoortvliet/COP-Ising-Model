@@ -1,3 +1,7 @@
+"""
+Functions that apply the classes
+Authors: Mio Poortvliet, Jonah Post
+"""
 from src.MetropolisAlgorithm import MetropolisAlgorithm
 from src.physics import IsingModel, magnetization
 from src.visualization import plot_grid, plot_time_trace, plot_xy

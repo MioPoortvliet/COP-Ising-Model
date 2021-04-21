@@ -12,7 +12,7 @@ def choice(p:float) -> bool:
 		return True
 
 
-# We only call this once, makes no sense to jit it
+# We only call this a few times, makes no sense to jit it
 #@njit
 def Nchoice(p:float, N=1) -> np.ndarray:
 	"""Because np.random.choice is horribly slow we write our own.
