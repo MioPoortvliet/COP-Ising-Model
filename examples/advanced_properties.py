@@ -27,14 +27,14 @@ quick_settings = {
 	"initial_distribution": 0.75,
 	"tmin": 1,
 	"tmax": 4,
-	"t_step_size": 2,
+	"t_step_size": 0.5,
 	"equilibrize_sweep_length": 5,
 	"tau_sweeps": 2,
-	"N_tau": 2,
-	"max_blocks": 2,
-	"treshold": 5e-5,
-	"max_sweeps": 1,
-	"sweep_length": 1,
+	"N_tau": 5,
+	"max_blocks": 15,
+	"treshold": 5e-6,
+	"max_sweeps": 50,
+	"sweep_length": 5,
 	"plot": 0
 }
 
@@ -57,7 +57,7 @@ def main(settings:dict, root_path:str) -> None:
 
 	calced_values = full_analysis_in_temp_range(temps, settings)
 
-	value_names = ("$\\tau(T)$", "$|m(T)|$", "chi$(T)$", "$C(T)$")
+	value_names = ("$\\tau(T)$", "$|m(T)|$", "$e(T)$", "chi$(T)$", "$C(T)$")
 
 	# Save and plot
 	for value, name in zip(calced_values, value_names):

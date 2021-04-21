@@ -109,6 +109,6 @@ class MetropolisAlgorithm:
         :param i: index of array to write to
         :type i: int
         """
-        self.saved_properties[i, 0] = self.current_energy / self.total_spins
+        self.saved_properties[i, 0] = self.current_energy
         for j, func in enumerate(self.propty_functions):
             self.saved_properties[i,j+1] = func(self.state)

@@ -17,7 +17,7 @@ def equilibrilize(mc:object, settings:dict):
 	if "treshold" in settings.keys():
 		treshold = settings["treshold"]
 	else:
-		treshold = 5e-7
+		treshold = 5e-8
 
 	if "max_sweeps" in settings.keys():
 		max_sweeps = settings["max_sweeps"]
@@ -27,7 +27,7 @@ def equilibrilize(mc:object, settings:dict):
 	if "sweep_length" in settings.keys():
 		sweep_length = settings["sweep_length"]
 	else:
-		sweep_length = 5
+		sweep_length = 10
 
 	if "plot" in settings.keys():
 		plot = settings["plot"]
@@ -61,7 +61,7 @@ def equilibrilize(mc:object, settings:dict):
 		plot_time_trace(mag / mc.total_spins, ylabel="Magnetization $m$", ylims=(-1, 1))
 
 
-def full_analysis_in_temp_range(temps:np.array, settings:dict)->Tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
+def full_analysis_in_temp_range(temps:np.array, settings:dict)->Tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
 	"""Spaghetti panic-inducing code that does a full analysis of an Ising spin system. Given a range of temperatures
 	and simulation settings it produces correlation times, absolute magnetization, magnetic susceptibility and
 	specific heat at these temperatures.
@@ -89,11 +89,13 @@ def full_analysis_in_temp_range(temps:np.array, settings:dict)->Tuple[np.ndarray
 	taus = np.zeros((temps.size, settings["N_tau"]))
 	absolute_magnetization_at_temp = np.zeros((temps.size, 2))
 	magnetic_susceptibility_at_temp = np.zeros_like(absolute_magnetization_at_temp)
+	energy_at_temp = np.zeros_like(absolute_magnetization_at_temp)
 	specific_heat_at_temp = np.zeros_like(absolute_magnetization_at_temp)
 	taus_at_temp = np.zeros_like(absolute_magnetization_at_temp)
 
 	# Loop over every temperature to calculate tau
 	for i in range(temps.size):
+		print(f"Temperature: {temps[i]}\n"+"-"*50)
 		# Create the ising model physics
 		im = IsingModel(dimensionless_temperature=temps[i], dims=settings["dimensions"])
 		properties = (magnetization,)
@@ -107,6 +109,7 @@ def full_analysis_in_temp_range(temps:np.array, settings:dict)->Tuple[np.ndarray
 			taus[i, j] = find_tau(mc, settings=settings)
 		tau = np.mean(taus[i, ::])
 
+		print(f"Beginning simulation of {settings['max_blocks']} blocks")
 		delta_t = int(16*tau)
 
 		# Create a bunch of arrays to store crap
@@ -115,6 +118,7 @@ def full_analysis_in_temp_range(temps:np.array, settings:dict)->Tuple[np.ndarray
 
 		# This one is different from the other two
 		total_magnetization_array = np.zeros(delta_t*settings["max_blocks"])
+		total_energy_array = np.zeros_like(total_magnetization_array)
 
 		for k in range(settings["max_blocks"]):
 			# NOT IMPLEMENTED:
@@ -125,6 +129,7 @@ def full_analysis_in_temp_range(temps:np.array, settings:dict)->Tuple[np.ndarray
 			magnetization_array = data[::, 1]
 			# Up to -1 bc we already calced step 0 in the previous block.
 			# If we say to run x steps we expect x points back, not x+1.
+			total_energy_array[k*delta_t:(1+k)*delta_t] = energy_array[:-1]
 			total_magnetization_array[k*delta_t:(1+k)*delta_t] = magnetization_array[:-1]
 
 			# Quantity averages (block)
@@ -132,19 +137,22 @@ def full_analysis_in_temp_range(temps:np.array, settings:dict)->Tuple[np.ndarray
 			specific_heat_block[k] = specific_heat(energy=energy_array, spins=mc.total_spins, temp=temps[i])
 
 		# Quantity average
-		# we explicitly use k in case we decide to stop the loop (NOT IMPLEMENTED)
+		# we explicitly use k in case we decide to stop the loop (which is NOT IMPLEMENTED)
 		absolute_magnetization_at_temp[i, 0] = np.mean( np.abs(total_magnetization_array[:(k+1)*delta_t]) ) / mc.total_spins
+		energy_at_temp[i, 0] = np.mean(total_energy_array[:(k+1)*delta_t]) / mc.total_spins
 		magnetic_susceptibility_at_temp[i, 0] = np.mean(magnetic_susceptibility_block[:k])
 		specific_heat_at_temp[i, 0] = np.mean(specific_heat_block[:k])
 		taus_at_temp[i, 0] = np.mean(taus[i, ::])
 
 		# Quantity mean
 		absolute_magnetization_at_temp[i, 1] = standard_deviation_of_the_mean( np.abs(total_magnetization_array[:(k+1)*delta_t]), tau=tau, tmax=delta_t ) / mc.total_spins
+		energy_at_temp[i, 1] = standard_deviation_of_the_mean(total_energy_array[:(k+1)*delta_t], tau=tau, tmax=delta_t) / mc.total_spins
 		magnetic_susceptibility_at_temp[i, 1] = np.std(magnetic_susceptibility_block[:k], ddof=1)
 		specific_heat_at_temp[i, 1] = np.std(specific_heat_block[:k], ddof=1)
 		taus_at_temp[i, 1] = np.std(taus[i, ::], ddof=1)
+		print()
 
-	return taus_at_temp, absolute_magnetization_at_temp, magnetic_susceptibility_at_temp, specific_heat_at_temp
+	return taus_at_temp, absolute_magnetization_at_temp, energy_at_temp, magnetic_susceptibility_at_temp, specific_heat_at_temp
 
 
 

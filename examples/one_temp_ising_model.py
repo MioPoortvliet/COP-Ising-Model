@@ -1,19 +1,21 @@
 from src.MetropolisAlgorithm import MetropolisAlgorithm
 from src.physics import IsingModel, magnetization
 from src.visualization import plot_grid, plot_time_trace
+from src.analysis import equilibrilize
 
 
 if __name__ == "__main__":
 	# Set up settings
-	sweeps = 20
-	settings = {"size":50, "dimensions":2, "initial_distribution":0.5}
+	sweeps = 40
+	settings = {"size":50, "dimensions":2, "initial_distribution":0.75}
 
 	# Set up model and property functions to be calculated
-	im = IsingModel(dimensionless_temperature=1, dims=settings["dimensions"])
+	im = IsingModel(dimensionless_temperature=1., dims=settings["dimensions"])
 	properties = (magnetization,)
 
 	# Initialize monte carlo engine
 	mc = MetropolisAlgorithm(model= im, property_functions=properties, settings=settings)
+	equilibrilize(mc, settings)
 
 	# Plot initial grid
 	#plot_grid(mc.state)
