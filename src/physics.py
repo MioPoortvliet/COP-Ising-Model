@@ -6,7 +6,7 @@ from itertools import product
 # False is up!!!!!
 
 class IsingModel:
-    def __init__(self, dimensionless_temperature=1, dims=2):
+    def __init__(self, dimensionless_temperature=1., dims=2):
         # self.temperature = temperature
         self.dimensionless_temperature = dimensionless_temperature
         self.energy_difference_nn_lookup = generate_energy_difference_lookup(self.energy_difference_nearest_neighbours, dims)
