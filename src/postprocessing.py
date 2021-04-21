@@ -1,12 +1,16 @@
 import numpy as np
 
 
-def magnetic_susceptibility_per_beta(magnetization_per_spin):
-	return np.mean(magnetization_per_spin**2)-np.mean(magnetization_per_spin)**2
+def standard_deviation_of_the_mean(series, tau, tmax):
+	return np.sqrt(2*tau / tmax * (np.mean(series**2) - np.mean(series)**2))
 
 
-def specific_heat(energy_per_spin, temp):
-	return 1/(temp**2)*(np.mean(energy_per_spin ** 2) - np.mean(energy_per_spin) ** 2)
+def magnetic_susceptibility_per_beta(magnetization, spins):
+	return 1/spins * (np.mean(magnetization**2)-np.mean(magnetization)**2)
+
+
+def specific_heat(energy, temp, spins):
+	return 1/(temp**2 * spins)*(np.mean(energy ** 2) - np.mean(energy) ** 2)
 
 
 def calc_chi(magnetization):

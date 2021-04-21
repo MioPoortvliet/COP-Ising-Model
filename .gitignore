@@ -118,3 +118,4 @@ dmypy.json
 .idea/misc.xml
 .idea/inspectionProfiles/profiles_settings.xml
 .idea/COP-Ising-Model.iml
+generated/
