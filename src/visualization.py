@@ -21,5 +21,6 @@ def plot_xy(x, y, xlabel, ylabel, dir="generated/plot_xy", *args, **kwargs):
 	plt.xlabel(xlabel)
 	plt.ylabel(ylabel)
 	ensure_dir(dir)
+	plt.savefig(f"{dir}/{slugify(xlabel)}-{slugify(ylabel)}-{slugify(datetime.now().isoformat())}.pdf")
 	plt.savefig(f"{dir}/{slugify(xlabel)}-{slugify(ylabel)}-{slugify(datetime.now().isoformat())}.png")
 	plt.show()

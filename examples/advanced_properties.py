@@ -17,7 +17,11 @@ if __name__ == "__main__":
 		"equilibrize_sweep_length":5,
 		"tau_sweeps":50,
 		"N_tau":25,
-		"max_blocks":50
+		"max_blocks":50,
+		"treshold":5e-7,
+		"max_sweeps":100,
+		"sweep_length":10,
+		"plot":0
 	}
 
 	quick_settings = {
@@ -26,15 +30,19 @@ if __name__ == "__main__":
 		"initial_distribution": 0.75,
 		"tmin":1,
 		"tmax":4,
-		"t_step_size":0.2,
+		"t_step_size":2,
 		"equilibrize_sweep_length":5,
 		"tau_sweeps":2,
 		"N_tau":2,
-		"max_blocks":2
+		"max_blocks":2,
+		"treshold":5e-5,
+		"max_sweeps":1,
+		"sweep_length":1,
+		"plot":1
 	}
 
 	# Quick? Uncomment for quick.
-	settings = quick_settings
+	#settings = quick_settings
 
 	fpath=f"generated/data/{slugify(datetime.now().isoformat())}/"
 	ensure_dir(fpath)

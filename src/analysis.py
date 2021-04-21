@@ -5,9 +5,29 @@ from src.postprocessing import calc_chi, magnetic_susceptibility_per_beta, speci
 import numpy as np
 
 
-def equilibrilize(mc, settings, sweep_length=5, max_sweeps=100, treshold=5e-7, plot=False):
-	# Thermalize: run the simulation
+def equilibrilize(mc, settings):
+	# Check if settings contains any of these keys
+	if "treshold" in settings.keys():
+		treshold = settings["treshold"]
+	else:
+		treshold = 5e-7
 
+	if "max_sweeps" in settings.keys():
+		max_sweeps = settings["max_sweeps"]
+	else:
+		max_sweeps = 100
+
+	if "sweep_length" in settings.keys():
+		sweep_length = settings["sweep_length"]
+	else:
+		sweep_length = 5
+
+	if "plot" in settings.keys():
+		plot = settings["plot"]
+	else:
+		plot = 5
+
+	# Equilibrilize: run the simulation
 	spins = settings["size"] ** settings["dimensions"]
 
 	print("Finding equilibrium")
@@ -50,7 +70,7 @@ def full_analysis_in_temp_range(temps, settings):
 		# Feed ising model into metropolis algorithm
 		mc = MetropolisAlgorithm(model=im, property_functions=properties, settings=settings)
 
-		equilibrilize(mc, settings, sweep_length=settings["equilibrize_sweep_length"])
+		equilibrilize(mc, settings)
 
 		# Determine tau
 		for j in range(settings["N_tau"]):
