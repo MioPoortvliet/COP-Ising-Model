@@ -3,7 +3,7 @@ from numba import njit, bool_
 
 
 @njit
-def choice(p):
+def choice(p:float) -> bool:
 	"""Because np.random.choice is horribly slow we write our own.
 	Fastest implementation I could think of to do a fast weighted bool choice"""
 	if np.random.random() > p:
@@ -14,7 +14,7 @@ def choice(p):
 
 # We only call this once, makes no sense to jit it
 #@njit
-def Nchoice(p, N=1):
+def Nchoice(p:float, N=1) -> np.ndarray:
 	"""Because np.random.choice is horribly slow we write our own.
 	Fastest implementation I could think of to do a fast weighted bool choice"""
 	out = np.ones(N, dtype=np.bool_)

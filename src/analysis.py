@@ -3,9 +3,12 @@ from src.physics import IsingModel, magnetization
 from src.visualization import plot_grid, plot_time_trace, plot_xy
 from src.postprocessing import calc_chi, magnetic_susceptibility_per_beta, specific_heat, standard_deviation_of_the_mean
 import numpy as np
+from typing import Tuple
+from warnings import warn
 
 
-def equilibrilize(mc, settings):
+def equilibrilize(mc:object, settings:dict):
+	"""Bring the system mc to an equilibrium within the parameters given in settings."""
 	# Check if settings contains any of these keys
 	if "treshold" in settings.keys():
 		treshold = settings["treshold"]
@@ -30,7 +33,7 @@ def equilibrilize(mc, settings):
 	# Equilibrilize: run the simulation
 	spins = settings["size"] ** settings["dimensions"]
 
-	print("Finding equilibrium")
+	print("Finding equilibrium.")
 	for sweep in range(max_sweeps):
 		mag = mc.run_steps( spins * sweep_length)[::, 1]
 		n=1
@@ -41,12 +44,12 @@ def equilibrilize(mc, settings):
 
 		# Check if we reach an 'end value' (derivative does not change)
 		if deriv < treshold:
-			print(f"Presumably in equilibrium after {sweep+1} sweeps")
+			print(f"Presumably in equilibrium after {sweep+1} sweeps.")
 			break
 
 		# At some point we give up, let the user know.
 		elif sweep+1 == max_sweeps:
-			print(f"Could not find equilibrium after {sweep+1} sweeps!")
+			warn(f"Could not find equilibrium after {sweep+1} sweeps!")
 			plot = True
 
 	# To check if it makes sense, you can plot the magnetization
@@ -54,8 +57,31 @@ def equilibrilize(mc, settings):
 		plot_time_trace(mag / mc.total_spins, ylabel="Magnetization $m$", ylims=(-1, 1))
 
 
-def full_analysis_in_temp_range(temps, settings):
-	"""This is so chaotic, I hate this code."""
+def full_analysis_in_temp_range(temps:np.array, settings:dict)->Tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
+	"""Spaghetti panic-inducing code that does a full analysis of an Ising spin system. Given a range of temperatures
+	and simulation settings it produces correlation times, absolute magnetization, magnetic susceptibility and
+	specific heat at these temperatures.
+
+	This is so chaotic, I hate this code.
+
+	--------------Settings at least expected--------------
+	"size": 					Size along axis of grid
+	"dimensions": 				Dimensions of the grid
+	"initial_distribution": 	Chance to have spin down in initialization
+	"tmin": 					Minimum temperature
+	"tmax": 					Maximum temperature
+	"t_step_size": 				Stepsize of temperature
+	"equilibrize_sweep_length":	Sublength after which it checks if it is in equilibrium
+	"tau_sweeps": 				Length over which correlation function is calculated (does not scale well!)
+	"N_tau": 					Number of samples to determine correlation length
+	"max_blocks": 				Maximum number of blocks of 16tau to calculate the properties over
+	--------------Settings further supported--------------
+	"treshold": 				Flatness of slope after which we call it equillibrilized
+	"max_sweeps": 				Maximum sweeps after which to cancell atempt to equillibrilize
+	"sweep_length": 			Sweep length of equilibrilization process before checking slope
+	"plot":						Plot magnetization before continuing? (1 or 0)
+	"""
+
 	taus = np.zeros((temps.size, settings["N_tau"]))
 	absolute_magnetization_at_temp = np.zeros((temps.size, 2))
 	magnetic_susceptibility_at_temp = np.zeros_like(absolute_magnetization_at_temp)
@@ -74,7 +100,7 @@ def full_analysis_in_temp_range(temps, settings):
 
 		# Determine tau
 		for j in range(settings["N_tau"]):
-			taus[i, j] = find_tau(mc, settings=settings, sweeps=settings["tau_sweeps"])
+			taus[i, j] = find_tau(mc, settings=settings)
 		tau = np.mean(taus[i, ::])
 
 		delta_t = int(16*tau)
@@ -101,14 +127,14 @@ def full_analysis_in_temp_range(temps, settings):
 			magnetic_susceptibility_block[k] = magnetic_susceptibility_per_beta(magnetization=magnetization_array, spins=mc.total_spins)
 			specific_heat_block[k] = specific_heat(energy=energy_array, spins=mc.total_spins, temp=temps[i])
 
-		# Quantity averages
+		# Quantity average
 		# we explicitly use k in case we decide to stop the loop (NOT IMPLEMENTED)
 		absolute_magnetization_at_temp[i, 0] = np.mean( np.abs(total_magnetization_array[:(k+1)*delta_t]) ) / mc.total_spins
 		magnetic_susceptibility_at_temp[i, 0] = np.mean(magnetic_susceptibility_block[:k])
 		specific_heat_at_temp[i, 0] = np.mean(specific_heat_block[:k])
 		taus_at_temp[i, 0] = np.mean(taus[i, ::])
 
-		# Quantity means
+		# Quantity mean
 		absolute_magnetization_at_temp[i, 1] = standard_deviation_of_the_mean( np.abs(total_magnetization_array[:(k+1)*delta_t]), tau=tau, tmax=delta_t ) / mc.total_spins
 		magnetic_susceptibility_at_temp[i, 1] = np.std(magnetic_susceptibility_block[:k], ddof=1)
 		specific_heat_at_temp[i, 1] = np.std(specific_heat_block[:k], ddof=1)
@@ -120,9 +146,11 @@ def full_analysis_in_temp_range(temps, settings):
 
 
 
-def tau_in_temp_range(temps, settings, N=5, critical_temperature = 2.2, *args, **kwargs):
-	"""Calculate tau in given temperature range and plot it"""
-	taus = np.zeros((temps.size, N))
+def tau_in_temp_range(temps:np.array, settings:dict, *args, **kwargs) -> np.array:
+	"""Calculate tau in given temperature range and settings then plot it"""
+	if "N_tau" not in settings.keys():
+		settings["N_tau"] = 1
+	taus = np.zeros((temps.size, settings["N_tau"]))
 
 	# Loop over every temperature to calculate tau
 	for i in range(temps.size):
@@ -135,7 +163,7 @@ def tau_in_temp_range(temps, settings, N=5, critical_temperature = 2.2, *args, *
 		"""
 		print(temps[i])
 
-		taus[i] = run_multiple_find_tau(settings=settings, N=N, temperature=temps[i], *args, **kwargs)
+		taus[i] = run_multiple_find_tau(settings=settings, temperature=temps[i])
 
 		print()
 
@@ -145,62 +173,48 @@ def tau_in_temp_range(temps, settings, N=5, critical_temperature = 2.2, *args, *
 	return taus
 
 
-def run_multiple_find_tau(
-		N=5,
-		equilibrize_sweeps=200,
-		sweeps=40,
-		settings={"size":50, "dimensions":2, "initial_distribution":0.5},
-		temperature=1.
-):
-
-	# Create the ising model physics
+def run_multiple_find_tau(settings:dict,temperature=1.)->np.ndarray:
+	"""Determines tau a few times."""
+	# Create the Ising model physics
 	im = IsingModel(dimensionless_temperature=temperature, dims=settings["dimensions"])
 	properties = (magnetization,)
 	# Feed ising model into metropolis algorithm
 	mc = MetropolisAlgorithm(model= im, property_functions=properties, settings=settings)
 
 	# Thermalize: run the simulation and retrieve the data
-	mag = mc.run_steps(settings["size"] ** settings["dimensions"] * equilibrize_sweeps)[::,1]
-	print("Presumably in equilibrium")
-
-	# To check if it makes sense, you can plot the magnetization
-	plot_time_trace(mag/mc.total_spins, ylabel="Magnetization $m$", ylims=(-1, 1))
+	equilibrilize(mc, settings)
 
 	# Now we are thermalized, determine tau
-	tau = np.zeros(N)
-	for n in range(N):
-		tau[n] = find_tau(mc, settings, sweeps=sweeps)
+	tau = np.zeros(settings["N_tau"])
+	for n in range(settings["N_tau"]):
+		tau[n] = find_tau(mc, settings)
 
-	print(np.mean(tau), np.std(tau, ddof=1))
-	#plot_time_trace(tau, "$\\tau$")
+	# Intended use: print(np.mean(tau), np.std(tau, ddof=1))
+
 	return tau
 
 
-def find_tau(mc, settings, sweeps=20):
-	print("Determining correlation time...")
+def find_tau(mc:object, settings:dict) -> float:
+	"""Determine tau given the simulation. mc is the simulation object, settings is the dict of settings.
+	Returns the determined value of tau."""
+
+	print("Determining correlation time.")
 	# If the sweeps are less than the correlation time this is not a good result anyway!
-	saved_properties = mc.run_steps(settings["size"]**settings["dimensions"]*sweeps)
+	saved_properties = mc.run_steps(settings["size"]**settings["dimensions"]*settings["tau_sweeps"])
 
 	# Retrive the magnetization
-	magnetization = saved_properties[::,1]
+	magnetization_array = saved_properties[::,1]
 
 	# Correlation function
-	chi = calc_chi(magnetization/settings["size"]**settings["dimensions"])
+	chi = calc_chi(magnetization_array/settings["size"]**settings["dimensions"])
 
 	# Find the index where chi dips below zero and calculate chi
 	first_negative_index = np.argwhere(chi < 0)
 	if first_negative_index.size > 0:
 		tau = np.sum(chi[:first_negative_index[0,0]])/chi[0]
+
 	else:
 		tau = 0
-		print("Failed to determine tau!")
-
-	#plot_time_trace(chi/chi[0], ylabel="$Chi(t)$")
-
-	#print(tau)
-	#plot_grid(mc.state[::,::])
-	#plot_time_trace(mag/mc.total_spins, ylabel="Magnetization $m$", ylims=(-1, 1))
-	#plot_time_trace(np.cumsum(chi)/chi[0], ylabel="$tau$")
-	#plot_time_trace(energy/mc.total_spins, ylabel="Energy $e$")
+		warn("Failed to determine tau!")
 
 	return tau

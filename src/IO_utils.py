@@ -11,6 +11,7 @@ import re
 
 
 def ensure_dir(file_path: str) -> None:
+	"""Makes sure dir exists."""
 	if not os.path.exists(file_path):
 		os.makedirs(file_path)
 

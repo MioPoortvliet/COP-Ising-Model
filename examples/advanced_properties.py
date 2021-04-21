@@ -38,7 +38,7 @@ quick_settings = {
 	"plot": 0
 }
 
-def main(settings, fpath) -> None:
+def main(settings:dict, fpath:str) -> None:
 	"""
 	Plot correlation time, absolute magnetization, magnetic susceptibility and heat capacity given settings.
 	:param settings: contains at least: size, dimensions, initial_distribution, tmin, tmax, t_step_size,
@@ -51,8 +51,8 @@ def main(settings, fpath) -> None:
 	# Save settings
 	to_json(fpath + "settings.json", settings)
 
-	# Create temperature array
-	temps = np.arange(settings["tmin"], settings["tmax"], settings["t_step_size"])
+	# Create temperature array, ensure we include the last point in the range
+	temps = np.arange(settings["tmin"], settings["tmax"]+settings["t_step_size"]/2, settings["t_step_size"])
 
 	calced_values = full_analysis_in_temp_range(temps, settings)
 
@@ -67,6 +67,6 @@ def main(settings, fpath) -> None:
 
 if __name__ == "__main__":
 	# Quick? Uncomment for quick (testing purposes only!):
-	# settings = quick_settings
+	settings = quick_settings
 	fpath = f"generated/data/{slugify(datetime.now().isoformat())}/"
 	main(settings, fpath)
