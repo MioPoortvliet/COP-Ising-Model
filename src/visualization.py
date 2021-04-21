@@ -6,13 +6,14 @@ from numpy import array
 
 def plot_grid(grid:array) -> None:
 	"""Make a simple plot of the grid (needs to be 2D)"""
+	plt.figure()
 	plt.imshow(grid)
-
 	plt.show()
 
 
 def plot_time_trace(time_series:array, ylabel="", ylims=None) -> None:
 	"""Plot a variable as a time trace."""
+	plt.figure()
 	plt.plot(time_series)
 	plt.xlabel("Steps")
 	plt.ylabel(ylabel)
