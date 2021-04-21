@@ -14,6 +14,7 @@ class IsingModel:
 
         eyes = np.eye(self.dims, dtype=np.int64)
         self.coordinate_deltas = np.concatenate((eyes, -eyes))
+        print(dimensionless_temperature)
     
     def hamiltonian(self, state):
         return - nearest_neighbour_sum(state, len(state.shape))

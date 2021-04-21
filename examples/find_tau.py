@@ -5,7 +5,14 @@ from src.postprocessing import calc_chi
 import numpy as np
 
 
-def tau_in_temp_range(temps, settings):
+def tau_in_temp_range(temps, settings, N=5, *args, **kwargs):
+	taus = np.zeros((temps.size, N))
+	for i in range(temps.size):
+		print(temps[i])
+		taus[i] = run_multiple(settings=settings, N=N, *args, **kwargs)
+		print()
+
+	plot_time_trace(np.mean(taus, axis=-1), ylabel="tau")
 
 
 def run_multiple(
@@ -30,9 +37,10 @@ def run_multiple(
 	for n in range(N):
 		tau[n] = find_tau(mc, settings, sweeps=sweeps)
 
-	print(tau)
+	#print(tau)
 	print(np.mean(tau), np.std(tau, ddof=1))
-	plot_time_trace(tau, "$\\tau$")
+	#plot_time_trace(tau, "$\\tau$")
+	return tau
 
 
 def find_tau(mc, settings, sweeps=20):
@@ -48,9 +56,9 @@ def find_tau(mc, settings, sweeps=20):
 		tau = 0
 		print("Failed to determine tau!")
 
-	plot_time_trace(chi/chi[0], ylabel="$Chi(t)$")
+	#plot_time_trace(chi/chi[0], ylabel="$Chi(t)$")
 
-	print(tau)
+	#print(tau)
 	#plot_grid(mc.state[::,::])
 	#plot_time_trace(mag/mc.total_spins, ylabel="Magnetization $m$", ylims=(-1, 1))
 	return tau
@@ -66,4 +74,4 @@ if __name__ == "__main__":
 
 	settings = {"size": 50, "dimensions": 2, "initial_distribution": 0.5}
 	temps = np.arange(1, 5, 0.2)
-	tau_in_temp_range(temps)
+	tau_in_temp_range(temps, settings, equilibrize_sweeps=500, sweeps=50, N=5)
