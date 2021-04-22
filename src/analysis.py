@@ -37,7 +37,7 @@ def equilibrilize(mc:object, settings:dict):
 	# Equilibrilize: run the simulation
 	spins = settings["size"] ** settings["dimensions"]
 
-	print("Finding equilibrium.")
+	print("Finding equilibrium")
 	for sweep in range(max_sweeps):
 		mag = mc.run_steps( spins * sweep_length)[::, 1]
 		n=1
@@ -210,7 +210,7 @@ def find_tau(mc:object, settings:dict) -> float:
 	"""Determine tau given the simulation. mc is the simulation object, settings is the dict of settings.
 	Returns the determined value of tau."""
 
-	print("Determining correlation time.")
+	print("Determining correlation time")
 	# If the sweeps are less than the correlation time this is not a good result anyway!
 	saved_properties = mc.run_steps(settings["size"]**settings["dimensions"]*settings["tau_sweeps"])
 
