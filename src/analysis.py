@@ -32,7 +32,7 @@ def equilibrilize(mc:object, settings:dict):
 	if "plot" in settings.keys():
 		plot = settings["plot"]
 	else:
-		plot = 5
+		plot = 0
 
 	# Equilibrilize: run the simulation
 	spins = settings["size"] ** settings["dimensions"]

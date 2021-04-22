@@ -27,11 +27,11 @@ critical_temp_settings = {
 	"initial_distribution": 0.75,	# Chance to have spin down in initialization
 	"tmin": 2,						# Minimum temperature
 	"tmax": 2.5,						# Maximum temperature
-	"t_step_size": 0.03,				# Stepsize of temperature
+	"t_step_size": 0.05,				# Stepsize of temperature
 	"equilibrize_sweep_length": 10,	# Sublength after which it checks if it is in equilibrium
 	"tau_sweeps": 60,				# Length over which correlation function is calculated (does not scale well!)
-	"N_tau": 15,					# Number of samples to determine correlation length
-	"max_blocks": 50,				# Maximum number of blocks of 16tau to calculate the properties over
+	"N_tau": 5,					# Number of samples to determine correlation length
+	"max_blocks": 16,				# Maximum number of blocks of 16tau to calculate the properties over
 	"treshold": 5e-8,				# Flatness of slope after which we call it equillibrilized
 	"max_sweeps": 100,				# Maximum sweeps after which to cancell atempt to equillibrilize
 	"sweep_length": 10,				# Sweep length of equilibrilization process before checking slope

@@ -52,8 +52,8 @@ def find_critical_exponents(temperature, quantity_data, error_quantity_data):
 def exact_magnetization(temperature):
     return (1. - (np.sinh(2./temperature))**-4 )**(1./8.)
 
-mainpath="generated\\data\\"
-folders = ["2021-04-22t005212292006\\", "2021-04-22t003241375617\\"]
+mainpath=""#"generated\\data\\"
+folders = ["generated\\data\\2021-04-22t182717027002\\",]
 temperature= np.array([])
 tau= np.array([])
 magnetization= np.array([])
