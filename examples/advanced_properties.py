@@ -31,7 +31,7 @@ critical_temp_settings = {
 	"equilibrize_sweep_length": 10,	# Sublength after which it checks if it is in equilibrium
 	"tau_sweeps": 50,				# Length over which correlation function is calculated (does not scale well!)
 	"N_tau": 5,					# Number of samples to determine correlation length
-	"max_blocks": 25,
+	"max_blocks": 25,				# Maximum number of blocks of 16tau to calculate the properties over
 	"treshold": 5e-8,				# Flatness of slope after which we call it equillibrilized
 	"max_sweeps": 100,				# Maximum sweeps after which to cancell atempt to equillibrilize
 	"sweep_length": 10,				# Sweep length of equilibrilization process before checking slope
