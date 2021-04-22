@@ -75,6 +75,7 @@ class IsingModel:
             # Mulitplication of 1 and -1 works like an xor
             energy_difference -= bool_to_spin(np.logical_xor(own_spin, spin))
 
+
         return energy_difference * 2
 
     def energy_difference_old(self, coordinate, state):
@@ -159,6 +160,6 @@ def nearest_neighbour_sum(state:np.ndarray, dimensions:int) -> np.ndarray:
         neighbours[2*dimension+1,:,:] = np.swapaxes(np.swapaxes(state, dimension, 0)[roll_backwards_idx], 0, dimension)
 
     # The xor works like spin multiplication (just write down a truth table and it's obvious)
-    return np.sum(bool_to_spin(np.logical_xor(state, neighbours)))
+    return np.sum(bool_to_spin(np.logical_xor(state, neighbours))) / 2
 
 

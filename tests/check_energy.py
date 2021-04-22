@@ -15,7 +15,13 @@ if __name__ == "__main__":
 
 	# Initialize monte carlo engine
 	mc = MetropolisAlgorithm(model= im, property_functions=properties, settings=settings)
-	equilibrilize(mc, settings)
+	#equilibrilize(mc, settings)
+	for i in range(10):
+		mc.step()
+		total_energy = im.hamiltonian(mc.state)
+		plot_grid(mc.state)
+		print(total_energy, mc.current_energy)
+		assert total_energy == mc.current_energy
 
 	# Plot initial grid
 	plot_grid(mc.state)

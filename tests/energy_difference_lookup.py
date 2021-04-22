@@ -4,7 +4,7 @@ from src.visualization import plot_grid
 
 settings = {"size": 50, "dimensions": 2, "initial_distribution": 0.5}
 
-im = IsingModel(temperature=0.1, dims=settings["dimensions"])
+im = IsingModel(dimensionless_temperature=0.1, dims=settings["dimensions"])
 properties = (magnetization,)
 
 mc = MetropolisAlgorithm(model=im, property_functions=properties, settings=settings)
