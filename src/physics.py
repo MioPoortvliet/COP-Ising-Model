@@ -161,5 +161,3 @@ def nearest_neighbour_sum(state:np.ndarray, dimensions:int) -> np.ndarray:
 
     # The xor works like spin multiplication (just write down a truth table and it's obvious)
     return np.sum(bool_to_spin(np.logical_xor(state, neighbours))) / 2
-
-

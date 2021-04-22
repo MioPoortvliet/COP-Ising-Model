@@ -48,6 +48,7 @@ def equilibrilize(mc:object, settings:dict):
 
 		# Check if we reach an 'end value' (derivative does not change)
 		if deriv < treshold:
+			#  We count sweep from 0
 			print(f"Presumably in equilibrium after {sweep+1} sweeps.")
 			break
 

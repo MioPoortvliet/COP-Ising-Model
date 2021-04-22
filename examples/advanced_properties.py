@@ -44,11 +44,28 @@ quick_settings = {
 	"initial_distribution": 0.75,
 	"tmin": 1,
 	"tmax": 4,
-	"t_step_size": 0.5,
+	"t_step_size": 1,
 	"equilibrize_sweep_length": 5,
-	"tau_sweeps": 2,
-	"N_tau": 5,
-	"max_blocks": 15,
+	"tau_sweeps": 10,
+	"N_tau": 2,
+	"max_blocks": 5,
+	"treshold": 5e-6,
+	"max_sweeps": 50,
+	"sweep_length": 5,
+	"plot": 0
+}
+
+quick_settings_3d = {
+	"size": 20,
+	"dimensions": 3,
+	"initial_distribution": 0.75,
+	"tmin": 1,
+	"tmax": 4,
+	"t_step_size": 1,
+	"equilibrize_sweep_length": 5,
+	"tau_sweeps": 10,
+	"N_tau": 2,
+	"max_blocks": 5,
 	"treshold": 5e-6,
 	"max_sweeps": 50,
 	"sweep_length": 5,
@@ -78,14 +95,19 @@ def main(settings:dict, root_path:str) -> None:
 
 	# Save and plot
 	for value, name in zip(calced_values, value_names):
+		# Users are stupid and might have removed the dir in the time the code ran.
+		ensure_dir(fpath)
+
 		to_file(fpath + slugify(name), value)
 		plot_xy(x=temps, y=value[::, 0], ylabel=name, xlabel="Dimensionless Temperature $T$", yerr=value[::, 1],
 				dir=fpath + "img/")
 
 
 if __name__ == "__main__":
-	# Quick? Uncomment for quick (testing purposes only!):
-# 	settings = quick_settings
-	settings  = critical_temp_settings
+	# What settings? Uncomment for testing purposes:
+	#settings  = critical_temp_settings
+	#settings = quick_settings_3d	# Poor statistics but it will take too long otherwise.
+	settings = quick_settings	# Poor statistics but it will take too long otherwise.
+
 	fpath = f"generated/data"
 	main(settings, fpath)

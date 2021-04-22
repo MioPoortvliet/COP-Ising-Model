@@ -21,4 +21,10 @@ We intended to write a general Metropolis Algorithm file that will accept any ph
 - Matplotlib
 - Numba
 
-See the report for more information on how to use this, numerical experiments and a reflection.
+See the report for more information on how to use this and numerical experiments on the 2D Ising model.
+
+##Important files
+- The Monte Carlo implementation is contained in ```src/MetropolisAlgorithm.py```.
+- The n dimensional Ising model is contained in ```src/physics.py```.
+- Examples can be found in the examples folder. ```main.py``` executes the contents of ```examples/advanced_properties.py```.
+- You can process data using ```src/data_analysis.py```.
