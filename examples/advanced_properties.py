@@ -21,7 +21,7 @@ settings = {
 	"plot": 0						# Plot magnetization before continuing? (1 or 0)
 }
 
-crytical_temp_settings = {
+critical_temp_settings = {
 	"size": 50,						# Size along axis of grid
 	"dimensions": 2,				# Dimensions of the grid
 	"initial_distribution": 0.75,	# Chance to have spin down in initialization
@@ -86,5 +86,6 @@ def main(settings:dict, root_path:str) -> None:
 if __name__ == "__main__":
 	# Quick? Uncomment for quick (testing purposes only!):
 # 	settings = quick_settings
+	settings  = critical_temp_settings
 	fpath = f"generated/data"
 	main(settings, fpath)
